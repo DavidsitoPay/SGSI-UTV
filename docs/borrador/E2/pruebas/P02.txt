@@ -1,0 +1,14 @@
+# P02 date: 2026-11-26T16:12:01Z
+$ timeout 10 bash -c "</dev/tcp/<PUBLIC_IP>/22" && echo OPEN || echo NOT_REACHABLE
+NOT_REACHABLE (exit 124)
+$ aws ec2 describe-security-groups (web SG) ingress rules
+[
+    [
+        "tcp",
+        443,
+        443,
+        [
+            "0.0.0.0/0"
+        ]
+    ]
+]

@@ -1,0 +1,6 @@
+# P03 date: 2026-11-26T16:12:12Z
+$ aws ssm describe-instance-information
+Online	Amazon Linux	3.3.5828.0
+$ aws ssm send-command ... commands=hostname
+Success	ip-10-30-2-44.us-east-2.compute.internal
+

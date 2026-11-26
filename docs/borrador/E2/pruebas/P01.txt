@@ -1,0 +1,3 @@
+# P01 date: 2026-11-26T16:12:00Z
+$ curl -k -s -o /dev/null -w "%{http_code}" --max-time 15 https://<PUBLIC_DNS>/
+200

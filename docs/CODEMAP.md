@@ -2,6 +2,8 @@
 
 Índice para ubicar documentos. Léelo primero; abre archivos solo en lo que señale. Rutas relativas al repo.
 
+Punto de entrada para redactar lo pendiente: `docs/borrador/GUIA_DOCUMENTACION_PENDIENTE.md`.
+
 Estado: proyecto solo de documentación (SGSI-UTV). Se actualiza dentro de cada tarea que cree, mueva o elimine archivos.
 
 Abreviaturas: E1-E7 = entregables del enunciado del proyecto final (`docs/00_enunciado_proyecto_final.md`, secciones 9 y 13). "Entrega N" = entrega semanal del curso, con su propio enunciado.
@@ -28,13 +30,14 @@ Plataforma: AWS (híbrida). Borradores en `docs/borrador/<entregable>/`; `docs/e
 | Entrega 1 (curso) | `docs/entregado/01_entregable_1_diseno_inicial_sgsi.md`; enunciado `docs/01_enunciado_entrega_1.md` | Arquitectura híbrida | Entrega 1 entregada; cobertura de E# por confirmar |
 | Entrega 2 (curso) | `docs/entregado/02_entregable_2_alcance_brechas_soa.md`; enunciado `docs/02_enunciado_entrega_2.md` | Políticas y controles | Entrega 2 entregada; cobertura de E# por confirmar |
 | E1 diseño de infraestructura | cubierto en `docs/entregado/01_entregable_1_diseno_inicial_sgsi.md` | Arquitectura híbrida | entregado vía Entrega 1; por confirmar |
-| E2 entorno implementado | IaC `infra/aws/` (sección 3); inventario `docs/borrador/E2/01_inventario_ambiente_aws.md`; evidencias `docs/borrador/E2/evidencia/` | Evidencia e implementación | red, identidad y registro desplegados en us-east-2 (cuenta utv); carga EC2+RDS bajo demanda (verificada, apagada); VPN, grupos IAM, GuardDuty, Security Hub e Inspector bloqueados por SCP (diseñados) |
+| E2 entorno implementado | IaC `infra/aws/` (sección 3); inventario `docs/borrador/E2/01_inventario_ambiente_aws.md`; evidencias `docs/borrador/E2/evidencia/`; pruebas de controles `docs/borrador/E2/02_pruebas_controles.md` y salidas `docs/borrador/E2/pruebas/` (incl. P05b); capturas de consola tomadas (C01-C10b, C12, C13; C11 no disponible) y su lista `docs/borrador/E2/capturas/LISTA_CAPTURAS.md`; README raíz `README.md` (resumen práctico: qué se hizo, cubre, no cubre); guion de exposición de 5 min `docs/borrador/E2/03_guion_exposicion.md` | Evidencia e implementación | red, identidad y registro desplegados en us-east-2 (cuenta utv); carga EC2+RDS bajo demanda (verificada, apagada); VPN, grupos IAM, GuardDuty, Security Hub e Inspector bloqueados por SCP (diseñados) |
 | E3 modelo de gestión de seguridad | parcial en entregado/01 y entregado/02 | Políticas y controles | parcial (por confirmar) |
 | E4 inventario, BIA, riesgos | E4.1 y E4.2 en `docs/entregado/01_entregable_1_diseno_inicial_sgsi.md` | Gestión de riesgos | E4.1-E4.2 entregados vía Entrega 1 (por confirmar); E4.3-E4.6 not started |
 | E5 políticas y controles | E5.2 alimentado por `docs/entregado/02_entregable_2_alcance_brechas_soa.md` | Políticas y controles | parcial (por confirmar); E5.1 y E5.3 not started |
 | E6 COBIT 2019 / ITIL 4 | _(sin archivo)_ | Gobierno y servicios de TI | not started |
 | E7 BCP/DRP | _(sin archivo)_ | Continuidad y Data Center | not started |
 | Documento final (~40 páginas) | _(sin archivo)_ | Documentación y estilo | not started |
+| Guía de documentación pendiente | `docs/borrador/GUIA_DOCUMENTACION_PENDIENTE.md` (mapa de entregables E1-E7, discusión, documento final y presentación con estado; guía de trabajo por entregable; hallazgos; reglas y formato; checklist final). Autocontenida para quien redacte lo que falta | Documentación y estilo | redactada; sirve de punto de entrada para los compañeros |
 
 ## 2. Pendientes abiertos (por confirmar)
 

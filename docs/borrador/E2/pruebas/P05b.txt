@@ -1,0 +1,25 @@
+# P05b date: 2026-11-26 (simulacion de politicas, solo lectura; no es un inicio de sesion con MFA real)
+Cuentas enmascaradas: <ACCOUNT_ID>. Usuario simulado inexistente: user/test-sim.
+
+## Politica de confianza de UtvAdminRole (aws iam get-role)
+{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::<ACCOUNT_ID>:root"},"Action":"sts:AssumeRole","Condition":{"Bool":{"aws:MultiFactorAuthPresent":"true"}}}
+(UtvAuditorRole usa la misma condicion; solo se simulo UtvAdminRole.)
+
+## Nota de metodo
+simulate-custom-policy con --resource-policy (la politica de confianza tal cual) devolvio "allowed" con MFA=false, true y sin clave: el simulador no modela la
+politica de confianza como requisito adicional, asi que esa variante NO aisla la condicion y no se usa como evidencia. Se simulo la misma sentencia convertida a
+politica de identidad (sin Principal, con Resource = ARN del rol) para evaluar la condicion de MFA.
+
+## Prueba 1: condicion de la politica de confianza (sts:AssumeRole sobre UtvAdminRole)
+$ aws iam simulate-custom-policy --policy-input-list <sentencia Allow sts:AssumeRole + Condition Bool aws:MultiFactorAuthPresent=true> --caller-arn arn:aws:iam::<ACCOUNT_ID>:user/test-sim --action-names sts:AssumeRole --resource-arns arn:aws:iam::<ACCOUNT_ID>:role/UtvAdminRole --context-entries ...
+aws:MultiFactorAuthPresent=false  -> implicitDeny
+aws:MultiFactorAuthPresent=true   -> allowed
+clave ausente                     -> implicitDeny (MissingContextValues: aws:MultiFactorAuthPresent)
+
+## Prueba 2: politica UtvDenyWithoutMfa (v1, tal como esta desplegada) junto a un Allow * de prueba
+(acciones: ec2:DescribeInstances = fuera de NotAction; iam:ListMFADevices = excepcion de NotAction)
+MFA=false  ec2:DescribeInstances -> explicitDeny (UtvDenyWithoutMfa)
+MFA=true   ec2:DescribeInstances -> allowed
+clave ausente ec2:DescribeInstances -> explicitDeny (BoolIfExists)
+MFA=false  iam:ListMFADevices    -> allowed (excepcion para poder registrar el MFA)
+MFA=true   iam:ListMFADevices    -> allowed

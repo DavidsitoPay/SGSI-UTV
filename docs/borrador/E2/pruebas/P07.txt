@@ -1,0 +1,9 @@
+# P07 date start: 2026-11-26T16:12:49Z
+$ aws cloudwatch describe-alarms --alarm-names utv-UnauthorizedApi (poll cada 60 s, max 10 min)
+16:12:51 state=OK
+16:13:52 state=OK
+16:14:54 state=OK
+16:15:55 state=ALARM
+$ aws cloudwatch describe-alarm-history --alarm-name utv-UnauthorizedApi --history-item-type StateUpdate
+2026-11-26T10:15:19.617000-06:00	Alarm updated from OK to ALARM
+2026-11-25T23:10:19.617000-06:00	Alarm updated from INSUFFICIENT_DATA to OK

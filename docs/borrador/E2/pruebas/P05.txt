@@ -1,0 +1,9 @@
+# P05 date: 2026-11-26T16:12:40Z
+$ aws sts assume-role --role-arn arn:aws:iam::<ACCOUNT_ID>:role/UtvAdminRole --role-session-name t7 (sin --serial-number)
+
+aws: [ERROR]: An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:sts::<ACCOUNT_ID>:assumed-role/AccountFullAccessRole/c438c498-b031-70a8-525a-fa163420e34c is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::<ACCOUNT_ID>:role/UtvAdminRole
+exit=254
+$ aws sts assume-role --role-arn arn:aws:iam::<ACCOUNT_ID>:role/UtvAuditorRole --role-session-name t7 (sin --serial-number)
+
+aws: [ERROR]: An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:sts::<ACCOUNT_ID>:assumed-role/AccountFullAccessRole/c438c498-b031-70a8-525a-fa163420e34c is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::<ACCOUNT_ID>:role/UtvAuditorRole
+exit=254

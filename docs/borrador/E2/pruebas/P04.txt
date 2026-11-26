@@ -1,0 +1,6 @@
+# P04 date: 2026-11-26T16:12:24Z
+$ SSM on web EC2: timeout 5 bash -c "</dev/tcp/<RDS_ENDPOINT>/5432" && echo OPEN || echo BLOCKED
+Success	BLOCKED
+
+$ aws rds describe-db-instances
+utv-db-01	postgres	False	True

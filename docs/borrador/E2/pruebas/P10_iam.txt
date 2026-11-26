@@ -1,0 +1,27 @@
+# P10 date: 2026-11-26 (solo lectura, perfil utv, us-east-2). Cuenta enmascarada como <ACCOUNT_ID>.
+$ aws iam get-account-password-policy
+{"PasswordPolicy": {"MinimumPasswordLength": 14, "RequireSymbols": true, "RequireNumbers": true, "RequireUppercaseCharacters": true, "RequireLowercaseCharacters": true, "AllowUsersToChangePassword": true, "ExpirePasswords": true, "MaxPasswordAge": 90, "PasswordReusePrevention": 24}}
+
+$ aws iam list-roles --query "Roles[?starts_with(RoleName,'Utv')].[RoleName,Arn]"
+UtvAdminRole	arn:aws:iam::<ACCOUNT_ID>:role/UtvAdminRole
+UtvAuditorRole	arn:aws:iam::<ACCOUNT_ID>:role/UtvAuditorRole
+UtvBackupRole	arn:aws:iam::<ACCOUNT_ID>:role/UtvBackupRole
+UtvEc2Role	arn:aws:iam::<ACCOUNT_ID>:role/UtvEc2Role
+
+$ aws iam get-role --role-name UtvAdminRole   (MaxSessionDuration 3600)
+AssumeRolePolicyDocument: Effect Allow; Principal AWS arn:aws:iam::<ACCOUNT_ID>:root; Action sts:AssumeRole; Condition {"Bool": {"aws:MultiFactorAuthPresent": "true"}}
+$ aws iam list-attached-role-policies --role-name UtvAdminRole
+PowerUserAccess, UtvDenyWithoutMfa
+$ aws iam list-role-policies --role-name UtvAdminRole
+(sin politicas en linea)
+
+$ aws iam get-role --role-name UtvAuditorRole   (MaxSessionDuration 3600)
+AssumeRolePolicyDocument: Effect Allow; Principal AWS arn:aws:iam::<ACCOUNT_ID>:root; Action sts:AssumeRole; Condition {"Bool": {"aws:MultiFactorAuthPresent": "true"}}
+$ aws iam list-attached-role-policies --role-name UtvAuditorRole
+SecurityAudit, UtvDenyWithoutMfa
+$ aws iam list-role-policies --role-name UtvAuditorRole
+(sin politicas en linea)
+
+$ aws iam get-policy-version (UtvDenyWithoutMfa, v1; AttachmentCount 2)
+Effect Deny; Resource *; Condition {"BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}}
+NotAction: iam:CreateVirtualMFADevice, iam:EnableMFADevice, iam:GetUser, iam:ListMFADevices, iam:ListVirtualMFADevices, iam:ResyncMFADevice, iam:ChangePassword, iam:GetAccountPasswordPolicy, sts:GetSessionToken

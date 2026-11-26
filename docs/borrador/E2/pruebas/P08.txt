@@ -1,0 +1,5 @@
+# P08 date: 2026-11-26T16:18:02Z
+$ aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=<X> (AssumeRole, CreateDetector)
+2026-11-26T16:12:42Z AssumeRole AccessDenied
+2026-11-26T16:12:41Z AssumeRole AccessDenied
+2026-11-26T16:12:43Z CreateDetector AccessDenied

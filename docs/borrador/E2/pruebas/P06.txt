@@ -1,0 +1,5 @@
+# P06 date: 2026-11-26T16:12:42Z
+$ aws guardduty create-detector --enable
+
+aws: [ERROR]: An error occurred (AccessDeniedException) when calling the CreateDetector operation: User: arn:aws:sts::<ACCOUNT_ID>:assumed-role/AccountFullAccessRole/c438c498-b031-70a8-525a-fa163420e34c is not authorized to perform: guardduty:CreateDetector on resource: arn:aws:guardduty:us-east-2:<ACCOUNT_ID>:detector/* with an explicit deny in a service control policy: arn:aws:organizations::<ORG_MGMT_ACCOUNT_ID>:policy/o-zzg4c3jsd5/service_control_policy/p-kofx9sib
+exit=254
