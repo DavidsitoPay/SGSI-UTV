@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SGSI-UTV workload - one t3.micro web server and one db.t4g.micro PostgreSQL, deployed on demand.
+Parameters:
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+Resources:
+  WebLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: utv-web-lt
+      LaunchTemplateData:
+        ImageId: !Ref LatestAmiId
+        InstanceType: t3.micro
+        MetadataOptions: {HttpTokens: required, HttpEndpoint: enabled}
+        CreditSpecification: {CpuCredits: standard}
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs: {VolumeType: gp3, VolumeSize: 8, Encrypted: true, DeleteOnTermination: true}
+        IamInstanceProfile:
+          Name: !ImportValue utv-identity-Ec2InstanceProfileName
+        SecurityGroupIds: [!ImportValue utv-network-WebSgId]
+        UserData:
+          Fn::Base64: |
+            #!/bin/bash
+            dnf install -y nginx openssl
+            mkdir -p /etc/nginx/ssl
+            openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/CN=utv-web.local" -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt
+            echo "SGSI-UTV demo (sin datos reales)" > /usr/share/nginx/html/index.html
+            cat > /etc/nginx/conf.d/utv.conf <<'EOF'
+            server { listen 443 ssl; ssl_certificate /etc/nginx/ssl/server.crt; ssl_certificate_key /etc/nginx/ssl/server.key; root /usr/share/nginx/html; }
+            EOF
+            systemctl enable --now nginx
+  WebInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref WebLaunchTemplate
+        Version: !GetAtt WebLaunchTemplate.LatestVersionNumber
+      SubnetId: !ImportValue utv-network-WebSubnetId
+      Tags:
+        - {Key: Name, Value: utv-web-01}
+        - {Key: Backup, Value: daily}
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: utv data subnets
+      SubnetIds:
+        - !ImportValue utv-network-DataSubnetAId
+        - !ImportValue utv-network-DataSubnetBId
+      Tags: [{Key: Name, Value: utv-db-subnets}]
+  Db:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      DBInstanceIdentifier: utv-db-01
+      Engine: postgres
+      EngineVersion: '18.3'
+      DBInstanceClass: db.t4g.micro
+      StorageType: gp2
+      AllocatedStorage: '20'
+      StorageEncrypted: true
+      MultiAZ: false
+      PubliclyAccessible: false
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups: [!ImportValue utv-network-DataSgId]
+      MasterUsername: utvadmin
+      ManageMasterUserPassword: true
+      DBName: utvacad
+      BackupRetentionPeriod: 1
+      DeletionProtection: false
+      CopyTagsToSnapshot: true
+      Tags:
+        - {Key: Name, Value: utv-db-01}
+        - {Key: Backup, Value: daily}
+  Ec2StatusAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: utv-ec2-status
+      Namespace: AWS/EC2
+      MetricName: StatusCheckFailed
+      Dimensions: [{Name: InstanceId, Value: !Ref WebInstance}]
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!ImportValue utv-operations-AlarmTopicArn]
+  RdsFreeStorageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: utv-rds-freestorage
+      Namespace: AWS/RDS
+      MetricName: FreeStorageSpace
+      Dimensions: [{Name: DBInstanceIdentifier, Value: !Ref Db}]
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 2147483648
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!ImportValue utv-operations-AlarmTopicArn]
+Outputs:
+  InstanceId: {Value: !Ref WebInstance}
+  DbInstanceId: {Value: !Ref Db}
+  WebPublicDns: {Value: !GetAtt WebInstance.PublicDnsName}
